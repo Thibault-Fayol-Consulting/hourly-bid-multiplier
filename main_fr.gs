@@ -1,15 +1,23 @@
 /**
- * hourly-bid-multiplier - Script Google Ads for SMBs
- * Author: Thibault Fayol
+ * --------------------------------------------------------------------------
+ * hourly-bid-multiplier - Google Ads Script for SMBs
+ * --------------------------------------------------------------------------
+ * Author: Thibault Fayol - Consultant SEA PME
+ * Website: https://thibaultfayol.com
+ * License: MIT
+ * --------------------------------------------------------------------------
  */
-var CONFIG = { TEST_MODE: true, MULTIPLIERS: [1.0, 1.2, 0.8] }; // Example hours
-function main(){
-  var hour = new Date().getHours();
-  var mult = CONFIG.MULTIPLIERS[hour] || 1.0;
-  var campIter = AdsApp.campaigns().withCondition("Status = ENABLED").get();
-  while(campIter.hasNext()){
-    var camp = campIter.next();
-    Logger.log("Setting bid modifier to " + mult + " for " + camp.getName());
-    if(!CONFIG.TEST_MODE){ camp.bidding().setBidModifier(mult); }
-  }
+var CONFIG = { TEST_MODE: true, MULTIPLIERS: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.2, 1.2, 1.2, 1.5, 1.5, 1.5, 1.5, 1.2, 1.2, 1.0, 1.0, 1.5, 1.5, 1.5, 1.2, 1.0, 1.0, 1.0] };
+function main() {
+    var hour = new Date().getHours();
+    var multiplier = CONFIG.MULTIPLIERS[hour];
+    var campIter = AdsApp.campaigns().withCondition("Status = ENABLED").get();
+    while (campIter.hasNext()) {
+        var camp = campIter.next();
+        var currentBidMod = camp.bidding().getBidModifier();
+        if (currentBidMod !== multiplier) {
+            Logger.log("Heure " + hour + " - Ajustement de " + camp.getName() + " à x" + multiplier);
+            if (!CONFIG.TEST_MODE) camp.bidding().setBidModifier(multiplier);
+        }
+    }
 }
